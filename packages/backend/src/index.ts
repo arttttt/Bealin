@@ -1,2 +1,3 @@
 // @bealin/backend - Fastify API
-export {};
+// Re-export domain types and interfaces for external use
+export * from './domain/index.js';
