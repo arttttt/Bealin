@@ -1,10 +1,17 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "rootDir": "./src",
     "outDir": "./dist",
     "jsx": "react-jsx",
-    "lib": ["ES2022", "DOM", "DOM.Iterable"]
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "baseUrl": ".",
+    "paths": {
+      "@domain/*": ["./src/domain/*"],
+      "@data/*": ["./src/data/*"],
+      "@infrastructure/*": ["./src/infrastructure/*"],
+      "@presentation/*": ["./src/presentation/*"],
+      "@shared/*": ["../shared/src/*"]
+    }
   },
-  "include": ["src"]
+  "include": ["src", "vite.config.ts"]
 }
