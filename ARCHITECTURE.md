@@ -52,7 +52,8 @@ packages/
 ├── shared/                    # Shared between frontend and backend
 │   └── src/
 │       ├── models/            # Domain entities (Issue, Label, Project)
-│       └── types/             # Branded types (IssueId, LabelId, etc.)
+│       ├── types/             # Branded types (IssueId, LabelId, etc.)
+│       └── schemas/           # Zod schemas for API validation (DTOs)
 │
 ├── backend/
 │   └── src/
