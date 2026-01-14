@@ -6,6 +6,8 @@
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "baseUrl": ".",
     "paths": {
+      "@di": ["./src/infrastructure/shared/di"],
+      "@di/*": ["./src/infrastructure/shared/di/*"],
       "@domain/*": ["./src/domain/*"],
       "@data/*": ["./src/data/*"],
       "@infrastructure/*": ["./src/infrastructure/*"],
