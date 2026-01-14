@@ -1,3 +1,4 @@
+import { Link } from '@tanstack/react-router';
 import { cn } from '@presentation/shared/lib/utils';
 import type { IssueViewModel } from '../types/IssueViewModel';
 
@@ -7,7 +8,10 @@ interface IssueRowProps {
 
 export function IssueRow({ issue }: IssueRowProps) {
   return (
-    <div className="flex items-center gap-4 px-4 py-3 hover:bg-accent/50">
+    <Link
+      to="/issues/$issueId"
+      params={{ issueId: issue.id }}
+      className="flex items-center gap-4 px-4 py-3 hover:bg-accent/50">
       <span className={cn('text-sm', issue.priorityColor)} title={issue.priority}>
         {getPriorityIcon(issue.priority)}
       </span>
@@ -17,7 +21,7 @@ export function IssueRow({ issue }: IssueRowProps) {
         {issue.status}
       </span>
       <span className="text-xs text-muted-foreground">{issue.createdAt}</span>
-    </div>
+    </Link>
   );
 }
 

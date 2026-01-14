@@ -50,6 +50,8 @@ export function formatIssue(issue: Issue): IssueViewModel {
     priority: PRIORITY_LABELS[issue.priority],
     priorityColor: PRIORITY_COLORS[issue.priority],
     createdAt: formatDate(issue.createdAt),
+    updatedAt: formatDate(issue.updatedAt),
+    labels: issue.labels.map((label) => label.value),
   };
 }
 

@@ -69,7 +69,7 @@ describe('issueFormatter', () => {
       expect(result.priorityColor).toBe('text-orange-400');
     });
 
-    it('formats date as short format', () => {
+    it('formats createdAt date as short format', () => {
       // GIVEN
       const issue = createMockIssue({ createdAt: new Date('2026-03-15') });
 
@@ -78,6 +78,41 @@ describe('issueFormatter', () => {
 
       // THEN
       expect(result.createdAt).toBe('Mar 15');
+    });
+
+    it('formats updatedAt date as short format', () => {
+      // GIVEN
+      const issue = createMockIssue({ updatedAt: new Date('2026-04-20') });
+
+      // WHEN
+      const result = formatIssue(issue);
+
+      // THEN
+      expect(result.updatedAt).toBe('Apr 20');
+    });
+
+    it('formats labels as array of string values', () => {
+      // GIVEN
+      const issue = createMockIssue({
+        labels: [new LabelId('label-a'), new LabelId('label-b')],
+      });
+
+      // WHEN
+      const result = formatIssue(issue);
+
+      // THEN
+      expect(result.labels).toEqual(['label-a', 'label-b']);
+    });
+
+    it('handles empty labels array', () => {
+      // GIVEN
+      const issue = createMockIssue({ labels: [] });
+
+      // WHEN
+      const result = formatIssue(issue);
+
+      // THEN
+      expect(result.labels).toEqual([]);
     });
   });
 

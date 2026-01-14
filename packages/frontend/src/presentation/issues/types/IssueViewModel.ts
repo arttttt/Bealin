@@ -7,4 +7,6 @@ export interface IssueViewModel {
   readonly priority: string;
   readonly priorityColor: string;
   readonly createdAt: string;
+  readonly updatedAt: string;
+  readonly labels: readonly string[];
 }

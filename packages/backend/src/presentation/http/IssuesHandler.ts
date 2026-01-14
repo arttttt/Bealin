@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { injectable, inject } from 'tsyringe';
+import { injectable } from 'tsyringe';
 import type { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import { IssueId, issueIdSchema } from '@bealin/shared';
 import { ListIssuesUseCase } from '@domain/usecases/ListIssuesUseCase.js';
@@ -83,7 +83,7 @@ export class IssuesHandler {
     }
   }
 
-  private handleError(reply: FastifyReply, error: unknown): void {
+  private handleError(reply: FastifyReply, _error: unknown): void {
     const errorResponse: ErrorResponse = {
       error: {
         code: 'INTERNAL_ERROR',
