@@ -1,5 +1,6 @@
 import { createRootRoute, Outlet } from '@tanstack/react-router';
 import { TanStackRouterDevtools } from '@tanstack/router-devtools';
+import { MainLayout } from '@presentation/shared/layouts/MainLayout';
 
 export const Route = createRootRoute({
   component: RootLayout,
@@ -7,11 +8,11 @@ export const Route = createRootRoute({
 
 function RootLayout() {
   return (
-    <>
-      <div className="min-h-screen bg-gray-50">
+    <div className="dark">
+      <MainLayout>
         <Outlet />
-      </div>
+      </MainLayout>
       <TanStackRouterDevtools />
-    </>
+    </div>
   );
 }
