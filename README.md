@@ -71,7 +71,12 @@ pnpm install
 pnpm dev
 
 # Testing
-pnpm test
+pnpm test              # Run tests once
+pnpm test:watch        # Run tests in watch mode
+pnpm test:coverage     # Run tests with coverage
+
+# Type checking
+pnpm typecheck
 
 # Linting
 pnpm lint
