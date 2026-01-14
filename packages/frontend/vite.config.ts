@@ -15,6 +15,7 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
+      '@di': fileURLToPath(new URL('./src/infrastructure/shared/di', import.meta.url)),
       '@domain': fileURLToPath(new URL('./src/domain', import.meta.url)),
       '@data': fileURLToPath(new URL('./src/data', import.meta.url)),
       '@infrastructure': fileURLToPath(new URL('./src/infrastructure', import.meta.url)),
