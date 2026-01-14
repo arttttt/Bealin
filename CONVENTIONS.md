@@ -136,6 +136,11 @@ export function useIssuesViewModel() {
 - Vitest for all tests
 - @testing-library/react for component tests (if needed)
 
+### Requirements
+- All new features must include tests
+- Bug fixes should include regression tests
+- PRs without tests will be rejected
+
 ### Structure: GIVEN-WHEN-THEN
 
 Every test follows the pattern:
