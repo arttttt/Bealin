@@ -1,5 +1,5 @@
 import { Spinner } from '@presentation/shared/components/Spinner';
-import { IssueList } from './components/IssueList';
+import { KanbanBoard } from './components/KanbanBoard';
 import { useIssuesViewModel } from './viewmodels/useIssuesViewModel';
 
 export function IssuesPage() {
@@ -27,8 +27,8 @@ export function IssuesPage() {
         <h1 className="text-lg font-semibold text-foreground">Issues</h1>
         <span className="text-sm text-muted-foreground">{issues.length} issues</span>
       </header>
-      <div className="flex-1 overflow-auto">
-        <IssueList issues={issues} />
+      <div className="flex-1 overflow-hidden">
+        <KanbanBoard issues={issues} />
       </div>
     </div>
   );
