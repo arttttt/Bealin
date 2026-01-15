@@ -18,7 +18,7 @@ export function IssueDetail({ issue }: IssueDetailProps) {
 
         {issue.description && (
           <div className="flex-1">
-            <div className="whitespace-pre-wrap text-sm leading-relaxed text-foreground/90">
+            <div className="whitespace-pre-wrap text-sm leading-relaxed text-foreground">
               {issue.description}
             </div>
           </div>
