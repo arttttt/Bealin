@@ -90,8 +90,8 @@ export function Sidebar() {
               className={cn(
                 'flex items-center gap-2.5 rounded-md px-2.5 py-1.5 text-sm transition-colors',
                 isActive
-                  ? 'bg-sidebar-accent text-sidebar-accent-foreground'
-                  : 'text-sidebar-foreground/80 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground',
+                  ? 'bg-sidebar-accent/60 text-sidebar-foreground'
+                  : 'text-sidebar-foreground/70 hover:bg-sidebar-accent/30 hover:text-sidebar-foreground',
               )}
             >
               {item.icon}
