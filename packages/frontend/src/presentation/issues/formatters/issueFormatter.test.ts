@@ -54,7 +54,7 @@ describe('issueFormatter', () => {
 
       // THEN
       expect(result.status).toBe('In Progress');
-      expect(result.statusColor).toBe('bg-status-in-progress text-status-in-progress-foreground');
+      expect(result.statusColor).toBe('text-status-in-progress-foreground');
     });
 
     it('formats priority as label with color', () => {

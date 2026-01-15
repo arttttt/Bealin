@@ -10,11 +10,11 @@ const STATUS_LABELS: Record<IssueStatus, string> = {
 };
 
 const STATUS_COLORS: Record<IssueStatus, string> = {
-  backlog: 'bg-status-backlog text-status-backlog-foreground',
-  todo: 'bg-status-todo text-status-todo-foreground',
-  in_progress: 'bg-status-in-progress text-status-in-progress-foreground',
-  done: 'bg-status-done text-status-done-foreground',
-  canceled: 'bg-status-canceled text-status-canceled-foreground',
+  backlog: 'text-status-backlog-foreground',
+  todo: 'text-status-todo-foreground',
+  in_progress: 'text-status-in-progress-foreground',
+  done: 'text-status-done-foreground',
+  canceled: 'text-status-canceled-foreground',
 };
 
 const PRIORITY_LABELS: Record<IssuePriority, string> = {

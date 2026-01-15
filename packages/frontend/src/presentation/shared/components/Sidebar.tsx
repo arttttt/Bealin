@@ -74,10 +74,13 @@ export function Sidebar() {
 
   return (
     <aside className="flex h-full w-[220px] flex-col border-r border-sidebar-border bg-sidebar">
-      <div className="flex h-12 items-center border-b border-sidebar-border px-4">
-        <span className="text-sm font-semibold text-sidebar-foreground">Bealin</span>
+      <div className="flex h-12 items-center gap-2 px-4">
+        <div className="flex h-6 w-6 items-center justify-center rounded bg-accent">
+          <span className="text-xs font-bold text-accent-foreground">B</span>
+        </div>
+        <span className="text-sm font-medium text-sidebar-foreground">Bealin</span>
       </div>
-      <nav className="flex-1 space-y-1 p-2">
+      <nav className="flex-1 space-y-0.5 px-2 py-2">
         {navItems.map((item) => {
           const isActive = currentPath.startsWith(item.path);
           return (
@@ -85,10 +88,10 @@ export function Sidebar() {
               key={item.path}
               to={item.path}
               className={cn(
-                'flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors',
+                'flex items-center gap-2.5 rounded-md px-2.5 py-1.5 text-sm transition-colors',
                 isActive
                   ? 'bg-sidebar-accent text-sidebar-accent-foreground'
-                  : 'text-sidebar-foreground hover:bg-sidebar-accent/50',
+                  : 'text-sidebar-foreground/80 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground',
               )}
             >
               {item.icon}
