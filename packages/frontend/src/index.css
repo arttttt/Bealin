@@ -42,6 +42,23 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+  /* Status colors */
+  --color-status-backlog: var(--status-backlog);
+  --color-status-backlog-foreground: var(--status-backlog-foreground);
+  --color-status-todo: var(--status-todo);
+  --color-status-todo-foreground: var(--status-todo-foreground);
+  --color-status-in-progress: var(--status-in-progress);
+  --color-status-in-progress-foreground: var(--status-in-progress-foreground);
+  --color-status-done: var(--status-done);
+  --color-status-done-foreground: var(--status-done-foreground);
+  --color-status-canceled: var(--status-canceled);
+  --color-status-canceled-foreground: var(--status-canceled-foreground);
+  /* Priority colors */
+  --color-priority-none: var(--priority-none);
+  --color-priority-low: var(--priority-low);
+  --color-priority-medium: var(--priority-medium);
+  --color-priority-high: var(--priority-high);
+  --color-priority-urgent: var(--priority-urgent);
 }
 
 :root {
@@ -77,6 +94,23 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+  /* Status colors (light mode) */
+  --status-backlog: oklch(0.65 0.02 260);
+  --status-backlog-foreground: oklch(0.45 0.03 260);
+  --status-todo: oklch(0.75 0.12 250);
+  --status-todo-foreground: oklch(0.45 0.18 250);
+  --status-in-progress: oklch(0.85 0.15 85);
+  --status-in-progress-foreground: oklch(0.5 0.15 85);
+  --status-done: oklch(0.8 0.15 145);
+  --status-done-foreground: oklch(0.45 0.18 145);
+  --status-canceled: oklch(0.75 0.12 25);
+  --status-canceled-foreground: oklch(0.5 0.18 25);
+  /* Priority colors (light mode) */
+  --priority-none: oklch(0.556 0 0);
+  --priority-low: oklch(0.55 0.18 250);
+  --priority-medium: oklch(0.6 0.15 85);
+  --priority-high: oklch(0.6 0.18 50);
+  --priority-urgent: oklch(0.55 0.22 25);
 }
 
 .dark {
@@ -91,7 +125,7 @@
   --secondary: oklch(0.269 0 0);
   --secondary-foreground: oklch(0.985 0 0);
   --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
+  --muted-foreground: oklch(0.75 0 0);
   --accent: oklch(0.269 0 0);
   --accent-foreground: oklch(0.985 0 0);
   --destructive: oklch(0.704 0.191 22.216);
@@ -107,10 +141,27 @@
   --sidebar-foreground: oklch(0.985 0 0);
   --sidebar-primary: oklch(0.488 0.243 264.376);
   --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent: oklch(0.35 0 0);
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+  /* Status colors (dark mode) */
+  --status-backlog: oklch(0.35 0.02 260);
+  --status-backlog-foreground: oklch(0.7 0.03 260);
+  --status-todo: oklch(0.35 0.08 250);
+  --status-todo-foreground: oklch(0.75 0.15 250);
+  --status-in-progress: oklch(0.35 0.08 85);
+  --status-in-progress-foreground: oklch(0.8 0.15 85);
+  --status-done: oklch(0.35 0.08 145);
+  --status-done-foreground: oklch(0.75 0.15 145);
+  --status-canceled: oklch(0.35 0.08 25);
+  --status-canceled-foreground: oklch(0.75 0.15 25);
+  /* Priority colors (dark mode) */
+  --priority-none: oklch(0.75 0 0);
+  --priority-low: oklch(0.75 0.15 250);
+  --priority-medium: oklch(0.8 0.15 85);
+  --priority-high: oklch(0.75 0.18 50);
+  --priority-urgent: oklch(0.75 0.2 25);
 }
 
 @layer base {

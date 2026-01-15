@@ -54,7 +54,7 @@ describe('issueFormatter', () => {
 
       // THEN
       expect(result.status).toBe('In Progress');
-      expect(result.statusColor).toBe('bg-yellow-500/20 text-yellow-400');
+      expect(result.statusColor).toBe('bg-status-in-progress text-status-in-progress-foreground');
     });
 
     it('formats priority as label with color', () => {
@@ -66,7 +66,7 @@ describe('issueFormatter', () => {
 
       // THEN
       expect(result.priority).toBe('High');
-      expect(result.priorityColor).toBe('text-orange-400');
+      expect(result.priorityColor).toBe('text-priority-high');
     });
 
     it('formats createdAt date as short format', () => {

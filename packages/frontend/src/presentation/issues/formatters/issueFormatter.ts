@@ -10,11 +10,11 @@ const STATUS_LABELS: Record<IssueStatus, string> = {
 };
 
 const STATUS_COLORS: Record<IssueStatus, string> = {
-  backlog: 'bg-zinc-500/20 text-zinc-400',
-  todo: 'bg-blue-500/20 text-blue-400',
-  in_progress: 'bg-yellow-500/20 text-yellow-400',
-  done: 'bg-green-500/20 text-green-400',
-  canceled: 'bg-red-500/20 text-red-400',
+  backlog: 'bg-status-backlog text-status-backlog-foreground',
+  todo: 'bg-status-todo text-status-todo-foreground',
+  in_progress: 'bg-status-in-progress text-status-in-progress-foreground',
+  done: 'bg-status-done text-status-done-foreground',
+  canceled: 'bg-status-canceled text-status-canceled-foreground',
 };
 
 const PRIORITY_LABELS: Record<IssuePriority, string> = {
@@ -26,11 +26,11 @@ const PRIORITY_LABELS: Record<IssuePriority, string> = {
 };
 
 const PRIORITY_COLORS: Record<IssuePriority, string> = {
-  none: 'text-muted-foreground',
-  low: 'text-blue-400',
-  medium: 'text-yellow-400',
-  high: 'text-orange-400',
-  urgent: 'text-red-400',
+  none: 'text-priority-none',
+  low: 'text-priority-low',
+  medium: 'text-priority-medium',
+  high: 'text-priority-high',
+  urgent: 'text-priority-urgent',
 };
 
 function formatDate(date: Date): string {
