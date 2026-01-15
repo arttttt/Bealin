@@ -13,7 +13,7 @@ export function KanbanCard({ issue }: KanbanCardProps) {
       params={{ issueId: issue.id }}
       className="block"
     >
-      <div className="rounded-md bg-card p-3 shadow-sm transition-shadow hover:shadow-md">
+      <div className="rounded-md border border-border bg-background-elevated p-3 transition-colors hover:bg-background-hover">
         <div className="mb-1 flex items-center gap-2 text-xs text-muted-foreground">
           <span>{issue.id}</span>
           <PriorityBadge priority={issue.priority} className={issue.priorityColor} />

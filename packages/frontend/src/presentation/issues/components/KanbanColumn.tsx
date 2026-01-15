@@ -8,7 +8,7 @@ interface KanbanColumnProps {
 
 export function KanbanColumn({ title, issues }: KanbanColumnProps) {
   return (
-    <div className="flex w-72 flex-shrink-0 flex-col rounded-lg bg-muted/50">
+    <div className="flex w-72 flex-shrink-0 flex-col rounded-lg bg-muted/10">
       <header className="flex items-center justify-between px-3 py-2">
         <span className="font-medium">{title}</span>
         <span className="text-sm text-muted-foreground">{issues.length}</span>
