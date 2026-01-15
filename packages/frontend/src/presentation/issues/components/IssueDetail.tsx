@@ -31,43 +31,50 @@ export function IssueDetail({ issue }: IssueDetailProps) {
         )}
       </div>
 
-      <aside className="w-64 border-l border-border p-6">
-        <h2 className="mb-4 text-xs font-medium uppercase tracking-wider text-muted-foreground">
-          Properties
-        </h2>
-        <div className="flex flex-col gap-4">
+      <aside className="w-64 border-l border-border-subtle">
+        <div className="px-4 py-3">
+          <h2 className="text-xs font-medium text-text-secondary">
+            Properties
+          </h2>
+        </div>
+        <div className="flex flex-col">
           <PropertyRow label="Status">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5">
               <StatusIcon status={issue.status} className={issue.statusColor} />
-              <span className="text-sm text-foreground">{issue.status}</span>
+              <span className="text-[13px] text-text-primary">{issue.status}</span>
             </div>
           </PropertyRow>
 
           <PropertyRow label="Priority">
-            <span className={cn('text-sm', issue.priorityColor)}>{issue.priority}</span>
+            <span className={cn('text-[13px]', issue.priorityColor)}>{issue.priority}</span>
           </PropertyRow>
 
+          <div className="mx-4 border-t border-border-subtle" />
+
           <PropertyRow label="Created">
-            <span className="text-sm text-foreground">{issue.createdAt}</span>
+            <span className="text-[13px] text-text-primary">{issue.createdAt}</span>
           </PropertyRow>
 
           <PropertyRow label="Updated">
-            <span className="text-sm text-foreground">{issue.updatedAt}</span>
+            <span className="text-[13px] text-text-primary">{issue.updatedAt}</span>
           </PropertyRow>
 
           {issue.labels.length > 0 && (
-            <PropertyRow label="Labels">
-              <div className="flex flex-wrap gap-1">
-                {issue.labels.map((label) => (
-                  <span
-                    key={label}
-                    className="rounded-sm bg-secondary px-1.5 py-0.5 text-xs text-foreground"
-                  >
-                    {label}
-                  </span>
-                ))}
-              </div>
-            </PropertyRow>
+            <>
+              <div className="mx-4 border-t border-border-subtle" />
+              <PropertyRow label="Labels">
+                <div className="flex flex-wrap gap-1">
+                  {issue.labels.map((label) => (
+                    <span
+                      key={label}
+                      className="rounded bg-secondary px-1.5 py-0.5 text-xs text-text-primary"
+                    >
+                      {label}
+                    </span>
+                  ))}
+                </div>
+              </PropertyRow>
+            </>
           )}
         </div>
       </aside>
@@ -82,8 +89,8 @@ interface PropertyRowProps {
 
 function PropertyRow({ label, children }: PropertyRowProps) {
   return (
-    <div className="flex flex-col gap-1">
-      <span className="text-xs text-muted-foreground">{label}</span>
+    <div className="flex items-center justify-between px-4 py-2 hover:bg-background-hover">
+      <span className="text-[13px] text-text-secondary">{label}</span>
       {children}
     </div>
   );
