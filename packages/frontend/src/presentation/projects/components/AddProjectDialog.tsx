@@ -70,7 +70,7 @@ export function AddProjectDialog({ isOpen, onClose, onProjectAdded }: AddProject
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
+    <Dialog open={isOpen} onOpenChange={(open: boolean) => !open && handleClose()}>
       <DialogContent className="sm:max-w-[480px]">
         <DialogHeader>
           <DialogTitle>Add Project</DialogTitle>
