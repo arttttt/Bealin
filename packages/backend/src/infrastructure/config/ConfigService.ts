@@ -117,10 +117,16 @@ export class ConfigService {
 
   /**
    * Validate that a path is a valid beads project.
-   * @param beadsPath - Absolute path to the .beads directory
+   * Accepts either a project path or a .beads directory path.
+   * @param inputPath - Absolute path to project folder or .beads directory
    * @returns Object with validity and suggested name
    */
-  validatePath(beadsPath: string): { valid: boolean; suggestedName: string } {
+  validatePath(inputPath: string): { valid: boolean; suggestedName: string } {
+    // Normalize: if path doesn't end with .beads, append it
+    const beadsPath = inputPath.endsWith('.beads')
+      ? inputPath
+      : join(inputPath, '.beads');
+
     const issuesPath = join(beadsPath, 'issues.jsonl');
     const valid = existsSync(issuesPath);
 
