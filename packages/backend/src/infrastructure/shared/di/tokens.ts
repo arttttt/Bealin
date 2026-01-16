@@ -10,10 +10,14 @@ export const DI_TOKENS = {
   IssueRepository: 'IssueRepository',
   LabelRepository: 'LabelRepository',
   ProjectRepository: 'ProjectRepository',
+  ConfigRepository: 'ConfigRepository',
 
   // Use Cases
   ListIssuesUseCase: 'ListIssuesUseCase',
   GetIssueUseCase: 'GetIssueUseCase',
+
+  // Services
+  ConfigService: 'ConfigService',
 } as const;
 
 export type DIToken = (typeof DI_TOKENS)[keyof typeof DI_TOKENS];
