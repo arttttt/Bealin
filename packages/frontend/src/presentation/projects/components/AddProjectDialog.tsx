@@ -33,7 +33,6 @@ export function AddProjectDialog({ isOpen, onClose, onProjectAdded, preventClose
   const { addProject } = useProjectsViewModel();
   const {
     path,
-    setPath,
     name,
     setName,
     isValidating,
@@ -101,14 +100,13 @@ export function AddProjectDialog({ isOpen, onClose, onProjectAdded, preventClose
                 <Input
                   id="path"
                   value={path}
-                  onChange={(e) => setPath(e.target.value)}
                   placeholder="/path/to/project"
                   className={cn(
                     'pr-8',
                     error && 'border-destructive',
                     validationResult?.valid && path.trim() && 'border-green-600',
                   )}
-                  autoFocus
+                  readOnly
                 />
                 {/* Status indicator */}
                 <div className="absolute right-2 top-1/2 -translate-y-1/2">
@@ -151,6 +149,7 @@ export function AddProjectDialog({ isOpen, onClose, onProjectAdded, preventClose
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder={validationResult?.suggestedName || 'Auto-detected from path'}
+              autoFocus
             />
             <p className="text-xs text-muted-foreground">
               Leave empty to use the folder name
