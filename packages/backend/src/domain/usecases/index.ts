@@ -6,3 +6,4 @@ export { AddProjectUseCase, InvalidPathError, ProjectAlreadyExistsError } from '
 export { RemoveProjectUseCase } from './RemoveProjectUseCase.js';
 export { SetActiveProjectUseCase, ProjectNotFoundError } from './SetActiveProjectUseCase.js';
 export { ValidateProjectPathUseCase } from './ValidateProjectPathUseCase.js';
+export { BrowseFolderUseCase } from './BrowseFolderUseCase.js';

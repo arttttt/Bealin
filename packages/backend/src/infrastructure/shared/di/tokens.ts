@@ -5,6 +5,7 @@
 export const DI_TOKENS = {
   // Data Sources
   JsonlSource: 'JsonlSource',
+  FileDialogSource: 'FileDialogSource',
 
   // Repositories
   IssueRepository: 'IssueRepository',
@@ -23,6 +24,7 @@ export const DI_TOKENS = {
   RemoveProjectUseCase: 'RemoveProjectUseCase',
   SetActiveProjectUseCase: 'SetActiveProjectUseCase',
   ValidateProjectPathUseCase: 'ValidateProjectPathUseCase',
+  BrowseFolderUseCase: 'BrowseFolderUseCase',
 
   // Services
   ConfigService: 'ConfigService',

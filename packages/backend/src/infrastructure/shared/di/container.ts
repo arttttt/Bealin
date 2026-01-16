@@ -2,6 +2,7 @@ import 'reflect-metadata';
 import { container } from 'tsyringe';
 import { DI_TOKENS } from './tokens.js';
 import { JsonlSource } from '@data/sources/filesystem/JsonlSource.js';
+import { FileDialogSource } from '@data/sources/dialog/FileDialogSource.js';
 import { IssueRepositoryImpl } from '@data/repositories/IssueRepositoryImpl.js';
 import { ConfigRepositoryImpl } from '@data/repositories/ConfigRepositoryImpl.js';
 import { ListIssuesUseCase } from '@domain/usecases/ListIssuesUseCase.js';
@@ -12,9 +13,11 @@ import { AddProjectUseCase } from '@domain/usecases/AddProjectUseCase.js';
 import { RemoveProjectUseCase } from '@domain/usecases/RemoveProjectUseCase.js';
 import { SetActiveProjectUseCase } from '@domain/usecases/SetActiveProjectUseCase.js';
 import { ValidateProjectPathUseCase } from '@domain/usecases/ValidateProjectPathUseCase.js';
+import { BrowseFolderUseCase } from '@domain/usecases/BrowseFolderUseCase.js';
 import { ConfigService } from '@infrastructure/config/ConfigService.js';
 import { IssuesHandler } from '@presentation/http/IssuesHandler.js';
 import { ProjectsHandler } from '@presentation/http/ProjectsHandler.js';
+import { FileSystemHandler } from '@presentation/http/FileSystemHandler.js';
 
 /**
  * Backend DI container instance.
@@ -27,6 +30,7 @@ import { ProjectsHandler } from '@presentation/http/ProjectsHandler.js';
 
 // Data Sources
 container.register(DI_TOKENS.JsonlSource, { useClass: JsonlSource });
+container.register(DI_TOKENS.FileDialogSource, { useClass: FileDialogSource });
 
 // Repositories
 container.register(DI_TOKENS.IssueRepository, { useClass: IssueRepositoryImpl });
@@ -43,6 +47,7 @@ container.register(DI_TOKENS.AddProjectUseCase, { useClass: AddProjectUseCase })
 container.register(DI_TOKENS.RemoveProjectUseCase, { useClass: RemoveProjectUseCase });
 container.register(DI_TOKENS.SetActiveProjectUseCase, { useClass: SetActiveProjectUseCase });
 container.register(DI_TOKENS.ValidateProjectPathUseCase, { useClass: ValidateProjectPathUseCase });
+container.register(DI_TOKENS.BrowseFolderUseCase, { useClass: BrowseFolderUseCase });
 
 // Services
 container.register(DI_TOKENS.ConfigService, { useClass: ConfigService });
@@ -50,5 +55,6 @@ container.register(DI_TOKENS.ConfigService, { useClass: ConfigService });
 // Handlers
 container.register(IssuesHandler, { useClass: IssuesHandler });
 container.register(ProjectsHandler, { useClass: ProjectsHandler });
+container.register(FileSystemHandler, { useClass: FileSystemHandler });
 
 export { container };

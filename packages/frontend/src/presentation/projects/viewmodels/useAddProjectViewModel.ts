@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useInject } from '@di/useInject';
 import { DI_TOKENS } from '@di/tokens';
 import type { ProjectRepository } from '@domain/repositories/ProjectRepository';
+import { FileSystemApiSource } from '@data/sources/api/FileSystemApiSource';
 
 interface ValidationResult {
   valid: boolean;
@@ -20,6 +21,8 @@ interface AddProjectViewModelResult {
   readonly setError: (error: string | null) => void;
   readonly isReady: boolean;
   readonly reset: () => void;
+  readonly browseFolder: () => Promise<void>;
+  readonly isBrowsing: boolean;
 }
 
 /**
@@ -31,8 +34,10 @@ export function useAddProjectViewModel(): AddProjectViewModelResult {
   const [name, setName] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [debouncedPath, setDebouncedPath] = useState('');
+  const [isBrowsing, setIsBrowsing] = useState(false);
 
   const projectRepo = useInject<ProjectRepository>(DI_TOKENS.ProjectRepository);
+  const fileSystemApi = useInject(FileSystemApiSource);
 
   // Debounce path changes for validation
   useEffect(() => {
@@ -74,6 +79,22 @@ export function useAddProjectViewModel(): AddProjectViewModelResult {
     setDebouncedPath('');
   }, []);
 
+  const browseFolder = useCallback(async () => {
+    setIsBrowsing(true);
+    setError(null);
+    try {
+      const result = await fileSystemApi.pickFolder();
+      if (result.path) {
+        setPath(result.path);
+      }
+      // If cancelled, do nothing
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to open folder picker');
+    } finally {
+      setIsBrowsing(false);
+    }
+  }, [fileSystemApi]);
+
   const isReady = Boolean(
     path.trim().length > 0 &&
     validationResult?.valid &&
@@ -92,5 +113,7 @@ export function useAddProjectViewModel(): AddProjectViewModelResult {
     setError,
     isReady,
     reset,
+    browseFolder,
+    isBrowsing,
   };
 }

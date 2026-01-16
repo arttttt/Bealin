@@ -42,6 +42,8 @@ export function AddProjectDialog({ isOpen, onClose, onProjectAdded, preventClose
     setError,
     isReady,
     reset,
+    browseFolder,
+    isBrowsing,
   } = useAddProjectViewModel();
 
   const handleClose = () => {
@@ -125,14 +127,15 @@ export function AddProjectDialog({ isOpen, onClose, onProjectAdded, preventClose
                 type="button"
                 variant="outline"
                 size="icon"
-                onClick={() => {
-                  // File System Access API is not widely supported and doesn't provide full paths
-                  // For now, show a helpful message
-                  alert('Paste the full path to your project folder.\n\nThe folder should contain a .beads directory.');
-                }}
+                onClick={() => void browseFolder()}
+                disabled={isBrowsing}
                 title="Browse for folder"
               >
-                <FolderOpen className="h-4 w-4" />
+                {isBrowsing ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <FolderOpen className="h-4 w-4" />
+                )}
               </Button>
             </div>
             {error && (
