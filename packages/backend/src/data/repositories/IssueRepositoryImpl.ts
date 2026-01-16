@@ -12,7 +12,7 @@ import { JsonlSource } from '../sources/filesystem/JsonlSource.js';
 interface RawIssue {
   id: string;
   title: string;
-  description: string;
+  description?: string;
   status: string;
   priority: number;
   issue_type?: string;
@@ -50,7 +50,7 @@ export class IssueRepositoryImpl implements IssueRepository {
     return {
       id: new IssueId(raw.id),
       title: raw.title,
-      description: raw.description,
+      description: raw.description ?? '',
       status: this.mapStatus(raw.status),
       priority: this.mapPriority(raw.priority),
       labels: [],

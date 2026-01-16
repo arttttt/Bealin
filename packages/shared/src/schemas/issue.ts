@@ -22,7 +22,7 @@ export const issuePrioritySchema = z.enum([
 export const issueSchema = z.object({
   id: issueIdSchema,
   title: z.string().min(1),
-  description: z.string(),
+  description: z.string().optional().default(''),
   status: issueStatusSchema,
   priority: issuePrioritySchema,
   labels: z.array(labelIdSchema),
