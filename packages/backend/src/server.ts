@@ -2,6 +2,7 @@ import 'reflect-metadata';
 import Fastify from 'fastify';
 import { container } from '@infrastructure/shared/di/container.js';
 import { IssuesHandler } from '@presentation/http/IssuesHandler.js';
+import { ProjectsHandler } from '@presentation/http/ProjectsHandler.js';
 
 const server = Fastify({
   logger: true,
@@ -14,6 +15,9 @@ server.get('/health', async () => {
 // Register API routes
 const issuesHandler = container.resolve(IssuesHandler);
 issuesHandler.registerRoutes(server);
+
+const projectsHandler = container.resolve(ProjectsHandler);
+projectsHandler.registerRoutes(server);
 
 const start = async () => {
   const port = parseInt(process.env['PORT'] ?? '4000', 10);
