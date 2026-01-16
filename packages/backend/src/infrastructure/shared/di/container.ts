@@ -6,8 +6,15 @@ import { IssueRepositoryImpl } from '@data/repositories/IssueRepositoryImpl.js';
 import { ConfigRepositoryImpl } from '@data/repositories/ConfigRepositoryImpl.js';
 import { ListIssuesUseCase } from '@domain/usecases/ListIssuesUseCase.js';
 import { GetIssueUseCase } from '@domain/usecases/GetIssueUseCase.js';
+import { GetProjectsUseCase } from '@domain/usecases/GetProjectsUseCase.js';
+import { GetActiveProjectUseCase } from '@domain/usecases/GetActiveProjectUseCase.js';
+import { AddProjectUseCase } from '@domain/usecases/AddProjectUseCase.js';
+import { RemoveProjectUseCase } from '@domain/usecases/RemoveProjectUseCase.js';
+import { SetActiveProjectUseCase } from '@domain/usecases/SetActiveProjectUseCase.js';
+import { ValidateProjectPathUseCase } from '@domain/usecases/ValidateProjectPathUseCase.js';
 import { ConfigService } from '@infrastructure/config/ConfigService.js';
 import { IssuesHandler } from '@presentation/http/IssuesHandler.js';
+import { ProjectsHandler } from '@presentation/http/ProjectsHandler.js';
 
 /**
  * Backend DI container instance.
@@ -25,14 +32,23 @@ container.register(DI_TOKENS.JsonlSource, { useClass: JsonlSource });
 container.register(DI_TOKENS.IssueRepository, { useClass: IssueRepositoryImpl });
 container.register(DI_TOKENS.ConfigRepository, { useClass: ConfigRepositoryImpl });
 
-// Use Cases
+// Use Cases - Issues
 container.register(DI_TOKENS.ListIssuesUseCase, { useClass: ListIssuesUseCase });
 container.register(DI_TOKENS.GetIssueUseCase, { useClass: GetIssueUseCase });
+
+// Use Cases - Projects
+container.register(DI_TOKENS.GetProjectsUseCase, { useClass: GetProjectsUseCase });
+container.register(DI_TOKENS.GetActiveProjectUseCase, { useClass: GetActiveProjectUseCase });
+container.register(DI_TOKENS.AddProjectUseCase, { useClass: AddProjectUseCase });
+container.register(DI_TOKENS.RemoveProjectUseCase, { useClass: RemoveProjectUseCase });
+container.register(DI_TOKENS.SetActiveProjectUseCase, { useClass: SetActiveProjectUseCase });
+container.register(DI_TOKENS.ValidateProjectPathUseCase, { useClass: ValidateProjectPathUseCase });
 
 // Services
 container.register(DI_TOKENS.ConfigService, { useClass: ConfigService });
 
 // Handlers
 container.register(IssuesHandler, { useClass: IssuesHandler });
+container.register(ProjectsHandler, { useClass: ProjectsHandler });
 
 export { container };

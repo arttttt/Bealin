@@ -12,9 +12,17 @@ export const DI_TOKENS = {
   ProjectRepository: 'ProjectRepository',
   ConfigRepository: 'ConfigRepository',
 
-  // Use Cases
+  // Use Cases - Issues
   ListIssuesUseCase: 'ListIssuesUseCase',
   GetIssueUseCase: 'GetIssueUseCase',
+
+  // Use Cases - Projects
+  GetProjectsUseCase: 'GetProjectsUseCase',
+  GetActiveProjectUseCase: 'GetActiveProjectUseCase',
+  AddProjectUseCase: 'AddProjectUseCase',
+  RemoveProjectUseCase: 'RemoveProjectUseCase',
+  SetActiveProjectUseCase: 'SetActiveProjectUseCase',
+  ValidateProjectPathUseCase: 'ValidateProjectPathUseCase',
 
   // Services
   ConfigService: 'ConfigService',

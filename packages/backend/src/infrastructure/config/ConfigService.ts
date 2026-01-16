@@ -116,6 +116,22 @@ export class ConfigService {
   }
 
   /**
+   * Validate that a path is a valid beads project.
+   * @param beadsPath - Absolute path to the .beads directory
+   * @returns Object with validity and suggested name
+   */
+  validatePath(beadsPath: string): { valid: boolean; suggestedName: string } {
+    const issuesPath = join(beadsPath, 'issues.jsonl');
+    const valid = existsSync(issuesPath);
+
+    // Extract suggested name from parent directory of .beads
+    const projectPath = beadsPath.replace(/\/.beads\/?$/, '');
+    const suggestedName = this.extractNameFromPath(projectPath);
+
+    return { valid, suggestedName };
+  }
+
+  /**
    * Extract a display name from a project path.
    * @param projectPath - The project path
    * @returns The last path segment as the name
