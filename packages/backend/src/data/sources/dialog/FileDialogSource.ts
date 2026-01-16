@@ -63,8 +63,13 @@ export class FileDialogSource {
         cancelled: false,
       };
     } catch (error) {
-      // User cancelled the dialog
-      if (error instanceof Error && error.message.includes('User canceled')) {
+      // User cancelled the dialog - macOS returns error code -128
+      // Check for both "cancelled" (British) and "canceled" (American) spellings
+      if (
+        error instanceof Error &&
+        (error.message.includes('User cancelled') ||
+          error.message.includes('(-128)'))
+      ) {
         return {
           path: null,
           cancelled: true,
