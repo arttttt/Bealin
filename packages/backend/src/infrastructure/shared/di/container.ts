@@ -18,6 +18,7 @@ import { ConfigService } from '@infrastructure/config/ConfigService.js';
 import { IssuesHandler } from '@presentation/http/IssuesHandler.js';
 import { ProjectsHandler } from '@presentation/http/ProjectsHandler.js';
 import { FileSystemHandler } from '@presentation/http/FileSystemHandler.js';
+import { EventsHandler } from '@presentation/http/EventsHandler.js';
 
 /**
  * Backend DI container instance.
@@ -56,5 +57,6 @@ container.register(DI_TOKENS.ConfigService, { useClass: ConfigService });
 container.register(IssuesHandler, { useClass: IssuesHandler });
 container.register(ProjectsHandler, { useClass: ProjectsHandler });
 container.register(FileSystemHandler, { useClass: FileSystemHandler });
+container.register(EventsHandler, { useClass: EventsHandler });
 
 export { container };

@@ -1,8 +1,11 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useCallback, useRef } from 'react';
 import { useInject } from '@di/useInject';
 import { DI_TOKENS } from '@di/tokens';
 import type { Project } from '@domain/entities/Project';
 import type { ProjectRepository } from '@domain/repositories/ProjectRepository';
+
+const PROJECT_SWITCH_DEBOUNCE_MS = 300;
 
 interface ProjectsViewModelResult {
   readonly projects: Project[];
@@ -54,6 +57,26 @@ export function useProjectsViewModel(): ProjectsViewModelResult {
     },
   });
 
+  // Debounced project switch to prevent excessive watcher start/stop cycles
+  const switchDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const switchProjectDebounced = useCallback(
+    (id: string): Promise<void> => {
+      return new Promise((resolve, reject) => {
+        if (switchDebounceRef.current) {
+          clearTimeout(switchDebounceRef.current);
+        }
+
+        switchDebounceRef.current = setTimeout(() => {
+          switchProjectMutation
+            .mutateAsync(id)
+            .then(resolve)
+            .catch(reject);
+        }, PROJECT_SWITCH_DEBOUNCE_MS);
+      });
+    },
+    [switchProjectMutation],
+  );
+
   const removeProjectMutation = useMutation({
     mutationFn: (id: string) => projectRepo.removeProject(id),
     onSuccess: () => {
@@ -73,7 +96,7 @@ export function useProjectsViewModel(): ProjectsViewModelResult {
       addProjectMutation.mutateAsync(
         name !== undefined ? { path, name } : { path },
       ),
-    switchProject: (id: string) => switchProjectMutation.mutateAsync(id),
+    switchProject: switchProjectDebounced,
     removeProject: (id: string) => removeProjectMutation.mutateAsync(id),
     isAddingProject: addProjectMutation.isPending,
     isSwitchingProject: switchProjectMutation.isPending,

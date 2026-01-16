@@ -7,6 +7,7 @@ import type { AddProjectUseCase } from '../../domain/usecases/AddProjectUseCase.
 import type { RemoveProjectUseCase } from '../../domain/usecases/RemoveProjectUseCase.js';
 import type { SetActiveProjectUseCase } from '../../domain/usecases/SetActiveProjectUseCase.js';
 import type { ValidateProjectPathUseCase } from '../../domain/usecases/ValidateProjectPathUseCase.js';
+import type { ConfigService } from '../../infrastructure/config/ConfigService.js';
 import {
   InvalidPathError,
   ProjectAlreadyExistsError,
@@ -50,6 +51,7 @@ describe('ProjectsHandler', () => {
   let mockRemoveProjectUseCase: RemoveProjectUseCase;
   let mockSetActiveProjectUseCase: SetActiveProjectUseCase;
   let mockValidateProjectPathUseCase: ValidateProjectPathUseCase;
+  let mockConfigService: ConfigService;
   let handler: ProjectsHandler;
 
   beforeEach(() => {
@@ -77,6 +79,10 @@ describe('ProjectsHandler', () => {
       execute: vi.fn(),
     } as unknown as ValidateProjectPathUseCase;
 
+    mockConfigService = {
+      getActiveProject: vi.fn().mockResolvedValue(null),
+    } as unknown as ConfigService;
+
     handler = new ProjectsHandler(
       mockGetProjectsUseCase,
       mockGetActiveProjectUseCase,
@@ -84,6 +90,7 @@ describe('ProjectsHandler', () => {
       mockRemoveProjectUseCase,
       mockSetActiveProjectUseCase,
       mockValidateProjectPathUseCase,
+      mockConfigService,
     );
   });
 
