@@ -4,12 +4,21 @@ import { cn } from '@presentation/shared/lib/utils';
 import { SidebarSection } from '@presentation/shared/components/Sidebar/SidebarSection';
 import { useProjectsViewModel } from '../viewmodels/useProjectsViewModel';
 import { AddProjectDialog } from './AddProjectDialog';
+import { RemoveProjectDialog } from './RemoveProjectDialog';
 import { ProjectItem } from './ProjectItem';
+import type { Project } from '@domain/entities/Project';
 
 export function ProjectsSection() {
-  const { projects, activeProject, switchProject, isLoading, isSwitchingProject } =
+  const { projects, activeProject, switchProject, removeProject, isLoading, isSwitchingProject } =
     useProjectsViewModel();
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [projectToRemove, setProjectToRemove] = useState<Project | null>(null);
+
+  const handleRemoveProject = async () => {
+    if (!projectToRemove) return;
+    await removeProject(projectToRemove.id.value);
+    setProjectToRemove(null);
+  };
 
   return (
     <SidebarSection title="Projects">
@@ -30,6 +39,7 @@ export function ProjectsSection() {
                     void switchProject(project.id.value);
                   }
                 }}
+                onRemove={() => setProjectToRemove(project)}
               />
             ))}
           </div>
@@ -51,6 +61,18 @@ export function ProjectsSection() {
         isOpen={isAddDialogOpen}
         onClose={() => setIsAddDialogOpen(false)}
         onProjectAdded={() => setIsAddDialogOpen(false)}
+      />
+
+      <RemoveProjectDialog
+        isOpen={projectToRemove !== null}
+        onClose={() => setProjectToRemove(null)}
+        project={projectToRemove}
+        isActiveProject={
+          projectToRemove !== null &&
+          activeProject !== null &&
+          projectToRemove.id.equals(activeProject.id)
+        }
+        onConfirm={() => void handleRemoveProject()}
       />
     </SidebarSection>
   );
