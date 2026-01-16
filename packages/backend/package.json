@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@bealin/shared": "workspace:*",
+    "chokidar": "^5.0.0",
     "fastify": "^5.2.1"
   },
   "devDependencies": {

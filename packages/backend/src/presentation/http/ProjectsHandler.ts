@@ -14,6 +14,8 @@ import {
 } from '../../domain/usecases/AddProjectUseCase.js';
 import { ProjectNotFoundError } from '../../domain/usecases/SetActiveProjectUseCase.js';
 import { ProjectMapper } from './ProjectMapper.js';
+import { BeadsWatcher } from '../../infrastructure/watchers/BeadsWatcher.js';
+import type { ConfigService } from '../../infrastructure/config/ConfigService.js';
 
 interface ErrorResponse {
   error: string;
@@ -35,6 +37,8 @@ interface ProjectIdParams {
 
 @injectable()
 export class ProjectsHandler {
+  private readonly watcher: BeadsWatcher;
+
   constructor(
     @inject(DI_TOKENS.GetProjectsUseCase)
     private readonly getProjectsUseCase: GetProjectsUseCase,
@@ -48,7 +52,11 @@ export class ProjectsHandler {
     private readonly setActiveProjectUseCase: SetActiveProjectUseCase,
     @inject(DI_TOKENS.ValidateProjectPathUseCase)
     private readonly validateProjectPathUseCase: ValidateProjectPathUseCase,
-  ) {}
+    @inject(DI_TOKENS.ConfigService)
+    private readonly configService: ConfigService,
+  ) {
+    this.watcher = BeadsWatcher.getInstance();
+  }
 
   registerRoutes(server: FastifyInstance): void {
     server.get('/api/projects', this.getProjects.bind(this));
@@ -130,6 +138,13 @@ export class ProjectsHandler {
 
       const projectPath = ProjectMapper.beadsPathToProjectPath(path);
       const project = await this.addProjectUseCase.execute(projectPath, name);
+
+      // If this project becomes active (first project added), start watching it
+      const activeProject = await this.configService.getActiveProject();
+      if (activeProject && activeProject.id === project.id) {
+        await this.watcher.watchProject(activeProject.path);
+      }
+
       reply.status(201).send({
         project: ProjectMapper.toDto(project),
       });
@@ -165,6 +180,13 @@ export class ProjectsHandler {
     try {
       const { id } = request.params;
       await this.setActiveProjectUseCase.execute(id);
+
+      // Update file watcher to watch new active project
+      const activeProject = await this.configService.getActiveProject();
+      if (activeProject) {
+        await this.watcher.watchProject(activeProject.path);
+      }
+
       reply.send({ success: true });
     } catch (error) {
       if (error instanceof ProjectNotFoundError) {

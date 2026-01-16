@@ -4,6 +4,7 @@ import { container } from '@infrastructure/shared/di/container.js';
 import { IssuesHandler } from '@presentation/http/IssuesHandler.js';
 import { ProjectsHandler } from '@presentation/http/ProjectsHandler.js';
 import { FileSystemHandler } from '@presentation/http/FileSystemHandler.js';
+import { EventsHandler } from '@presentation/http/EventsHandler.js';
 
 const server = Fastify({
   logger: true,
@@ -22,6 +23,9 @@ projectsHandler.registerRoutes(server);
 
 const fileSystemHandler = container.resolve(FileSystemHandler);
 fileSystemHandler.registerRoutes(server);
+
+const eventsHandler = container.resolve(EventsHandler);
+eventsHandler.registerRoutes(server);
 
 const start = async () => {
   const port = parseInt(process.env['PORT'] ?? '4000', 10);
