@@ -10,15 +10,13 @@ export const Route = createRootRoute({
 
 function RootLayout() {
   return (
-    <div className="dark">
-      <ProjectProvider>
-        <KanbanScrollProvider>
-          <MainLayout>
-            <Outlet />
-          </MainLayout>
-        </KanbanScrollProvider>
-      </ProjectProvider>
+    <ProjectProvider>
+      <KanbanScrollProvider>
+        <MainLayout>
+          <Outlet />
+        </MainLayout>
+      </KanbanScrollProvider>
       <TanStackRouterDevtools />
-    </div>
+    </ProjectProvider>
   );
 }
