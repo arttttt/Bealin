@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Loader2, FolderOpen, AlertCircle, CheckCircle2 } from 'lucide-react';
 import {
   Dialog,
@@ -44,6 +44,13 @@ export function AddProjectDialog({ isOpen, onClose, onProjectAdded, preventClose
     browseFolder,
     isBrowsing,
   } = useAddProjectViewModel();
+
+  // Reset state when dialog opens
+  useEffect(() => {
+    if (isOpen) {
+      reset();
+    }
+  }, [isOpen, reset]);
 
   const handleClose = () => {
     if (preventClose) return;
@@ -103,10 +110,12 @@ export function AddProjectDialog({ isOpen, onClose, onProjectAdded, preventClose
                   placeholder="/path/to/project"
                   className={cn(
                     'pr-8',
+                    'focus-visible:ring-0 focus-visible:ring-offset-0',
                     error && 'border-destructive',
                     validationResult?.valid && path.trim() && 'border-green-600',
                   )}
                   readOnly
+                  tabIndex={-1}
                 />
                 {/* Status indicator */}
                 <div className="absolute right-2 top-1/2 -translate-y-1/2">
