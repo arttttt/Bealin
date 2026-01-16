@@ -3,11 +3,25 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { IssueRepositoryImpl } from './IssueRepositoryImpl.js';
 import { JsonlSource } from '../sources/filesystem/JsonlSource.js';
 import { IssueId } from '@bealin/shared';
+import type { ConfigService } from '../../infrastructure/config/ConfigService.js';
+import { NoActiveProjectError } from '../../domain/errors/NoActiveProjectError.js';
 
 function createMockJsonlSource(): JsonlSource {
   return {
     readAll: vi.fn(),
   } as unknown as JsonlSource;
+}
+
+function createMockConfigService(activeProject: { id: string; path: string } | null): ConfigService {
+  return {
+    getActiveProject: vi.fn().mockResolvedValue(activeProject),
+    getIssuesPath: vi.fn().mockImplementation((project) => `${project.path}/.beads/issues.jsonl`),
+    getBeadsPath: vi.fn().mockImplementation((project) => `${project.path}/.beads`),
+    getProjects: vi.fn(),
+    addProject: vi.fn(),
+    removeProject: vi.fn(),
+    setActiveProject: vi.fn(),
+  } as unknown as ConfigService;
 }
 
 function createRawIssue(overrides: Record<string, unknown> = {}) {
@@ -24,14 +38,40 @@ function createRawIssue(overrides: Record<string, unknown> = {}) {
   };
 }
 
+const mockProject = { id: 'proj-1', path: '/test/project' };
+
 describe('IssueRepositoryImpl', () => {
   let repository: IssueRepositoryImpl;
   let mockJsonlSource: JsonlSource;
+  let mockConfigService: ConfigService;
 
   beforeEach(() => {
     vi.clearAllMocks();
     mockJsonlSource = createMockJsonlSource();
-    repository = new IssueRepositoryImpl(mockJsonlSource);
+    mockConfigService = createMockConfigService(mockProject);
+    repository = new IssueRepositoryImpl(mockJsonlSource, mockConfigService);
+  });
+
+  describe('getIssuesFilePath', () => {
+    it('throws NoActiveProjectError when no project is active', async () => {
+      // GIVEN
+      const noProjectConfigService = createMockConfigService(null);
+      const repo = new IssueRepositoryImpl(mockJsonlSource, noProjectConfigService);
+
+      // WHEN/THEN
+      await expect(repo.findAll()).rejects.toThrow(NoActiveProjectError);
+    });
+
+    it('uses path from active project', async () => {
+      // GIVEN
+      vi.mocked(mockJsonlSource.readAll).mockResolvedValue([]);
+
+      // WHEN
+      await repository.findAll();
+
+      // THEN
+      expect(mockJsonlSource.readAll).toHaveBeenCalledWith('/test/project/.beads/issues.jsonl');
+    });
   });
 
   describe('findAll', () => {

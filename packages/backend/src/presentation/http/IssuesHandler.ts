@@ -6,6 +6,7 @@ import type { ListIssuesUseCase } from '../../domain/usecases/ListIssuesUseCase.
 import type { GetIssueUseCase } from '../../domain/usecases/GetIssueUseCase.js';
 import { DI_TOKENS } from '../../infrastructure/shared/di/tokens.js';
 import { IssueMapper } from './IssueMapper.js';
+import { NoActiveProjectError } from '../../domain/errors/NoActiveProjectError.js';
 
 interface ErrorResponse {
   error: {
@@ -86,7 +87,18 @@ export class IssuesHandler {
     }
   }
 
-  private handleError(reply: FastifyReply, _error: unknown): void {
+  private handleError(reply: FastifyReply, error: unknown): void {
+    if (error instanceof NoActiveProjectError) {
+      const errorResponse: ErrorResponse = {
+        error: {
+          code: 'NO_ACTIVE_PROJECT',
+          message: 'Please select a project first',
+        },
+      };
+      reply.status(400).send(errorResponse);
+      return;
+    }
+
     const errorResponse: ErrorResponse = {
       error: {
         code: 'INTERNAL_ERROR',

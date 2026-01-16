@@ -1,10 +1,11 @@
 import { inject, injectable } from 'tsyringe';
-import { resolve } from 'node:path';
 import type { Issue, IssueStatus, IssuePriority } from '@bealin/shared';
 import { IssueId } from '@bealin/shared';
 import type { IssueRepository } from '../../domain/repositories/IssueRepository.js';
 import { DI_TOKENS } from '../../infrastructure/shared/di/tokens.js';
 import { JsonlSource } from '../sources/filesystem/JsonlSource.js';
+import type { ConfigService } from '../../infrastructure/config/ConfigService.js';
+import { NoActiveProjectError } from '../../domain/errors/NoActiveProjectError.js';
 
 /**
  * Raw issue record from beads JSONL file.
@@ -27,22 +28,33 @@ interface RawIssue {
  */
 @injectable()
 export class IssueRepositoryImpl implements IssueRepository {
-  private readonly issuesFilePath: string;
-
   constructor(
     @inject(DI_TOKENS.JsonlSource) private readonly jsonlSource: JsonlSource,
-  ) {
-    const beadsPath = process.env['BEADS_PATH'] || resolve(process.cwd(), '..', '.beads');
-    this.issuesFilePath = resolve(beadsPath, 'issues.jsonl');
+    @inject(DI_TOKENS.ConfigService) private readonly configService: ConfigService,
+  ) {}
+
+  /**
+   * Get the issues file path from the active project.
+   * @throws NoActiveProjectError if no project is selected
+   */
+  private async getIssuesFilePath(): Promise<string> {
+    const activeProject = await this.configService.getActiveProject();
+    if (!activeProject) {
+      throw new NoActiveProjectError('No active project selected');
+    }
+    return this.configService.getIssuesPath(activeProject);
   }
 
   async findAll(): Promise<Issue[]> {
-    const rawIssues = await this.jsonlSource.readAll<RawIssue>(this.issuesFilePath);
+    const issuesFilePath = await this.getIssuesFilePath();
+    const rawIssues = await this.jsonlSource.readAll<RawIssue>(issuesFilePath);
     return rawIssues.map((raw) => this.mapToIssue(raw));
   }
 
   async findById(id: IssueId): Promise<Issue | null> {
-    const issues = await this.findAll();
+    const issuesFilePath = await this.getIssuesFilePath();
+    const rawIssues = await this.jsonlSource.readAll<RawIssue>(issuesFilePath);
+    const issues = rawIssues.map((raw) => this.mapToIssue(raw));
     return issues.find((issue) => issue.id.equals(id)) ?? null;
   }
 
