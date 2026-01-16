@@ -2,8 +2,16 @@ import 'reflect-metadata';
 import { injectable } from 'tsyringe';
 import { type IssueDto, issueSchema } from '@bealin/shared';
 import { z } from 'zod';
+import { NoActiveProjectError } from '../../errors/NoActiveProjectError';
 
 const issueListSchema = z.array(issueSchema);
+
+const apiErrorSchema = z.object({
+  error: z.object({
+    code: z.string(),
+    message: z.string(),
+  }),
+});
 
 /**
  * API data source for Issue entity.
@@ -22,6 +30,13 @@ export class IssueApiSource {
     const response = await fetch(this.baseUrl);
 
     if (!response.ok) {
+      const errorData: unknown = await response.json().catch(() => null);
+      const errorResult = apiErrorSchema.safeParse(errorData);
+
+      if (errorResult.success && errorResult.data.error.code === 'NO_ACTIVE_PROJECT') {
+        throw new NoActiveProjectError(errorResult.data.error.message);
+      }
+
       throw new Error(`Failed to fetch issues: ${response.status}`);
     }
 
@@ -49,6 +64,13 @@ export class IssueApiSource {
     }
 
     if (!response.ok) {
+      const errorData: unknown = await response.json().catch(() => null);
+      const errorResult = apiErrorSchema.safeParse(errorData);
+
+      if (errorResult.success && errorResult.data.error.code === 'NO_ACTIVE_PROJECT') {
+        throw new NoActiveProjectError(errorResult.data.error.message);
+      }
+
       throw new Error(`Failed to fetch issue: ${response.status}`);
     }
 

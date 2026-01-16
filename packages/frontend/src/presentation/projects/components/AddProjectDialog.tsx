@@ -20,13 +20,15 @@ interface AddProjectDialogProps {
   isOpen: boolean;
   onClose: () => void;
   onProjectAdded?: (project: Project) => void;
+  /** When true, dialog cannot be closed without adding a project */
+  preventClose?: boolean;
 }
 
 /**
  * Dialog for adding a new beads project.
  * User enters a path to a folder containing .beads directory.
  */
-export function AddProjectDialog({ isOpen, onClose, onProjectAdded }: AddProjectDialogProps) {
+export function AddProjectDialog({ isOpen, onClose, onProjectAdded, preventClose }: AddProjectDialogProps) {
   const [isAdding, setIsAdding] = useState(false);
   const { addProject } = useProjectsViewModel();
   const {
@@ -43,6 +45,7 @@ export function AddProjectDialog({ isOpen, onClose, onProjectAdded }: AddProject
   } = useAddProjectViewModel();
 
   const handleClose = () => {
+    if (preventClose) return;
     reset();
     onClose();
   };
@@ -70,8 +73,16 @@ export function AddProjectDialog({ isOpen, onClose, onProjectAdded }: AddProject
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open: boolean) => !open && handleClose()}>
-      <DialogContent className="sm:max-w-[480px]">
+    <Dialog open={isOpen} onOpenChange={(open: boolean) => {
+      if (!open && preventClose) return;
+      if (!open) handleClose();
+    }}>
+      <DialogContent
+        className="sm:max-w-[480px]"
+        showCloseButton={!preventClose}
+        onEscapeKeyDown={(e) => preventClose && e.preventDefault()}
+        onPointerDownOutside={(e) => preventClose && e.preventDefault()}
+      >
         <DialogHeader>
           <DialogTitle>Add Project</DialogTitle>
           <DialogDescription>
@@ -145,9 +156,11 @@ export function AddProjectDialog({ isOpen, onClose, onProjectAdded }: AddProject
         </div>
 
         <DialogFooter>
-          <Button variant="ghost" onClick={handleClose} disabled={isAdding}>
-            Cancel
-          </Button>
+          {!preventClose && (
+            <Button variant="ghost" onClick={handleClose} disabled={isAdding}>
+              Cancel
+            </Button>
+          )}
           <Button onClick={handleSubmit} disabled={!isReady || isAdding}>
             {isAdding ? (
               <>

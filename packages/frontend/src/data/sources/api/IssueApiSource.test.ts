@@ -1,6 +1,7 @@
 import 'reflect-metadata';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { IssueApiSource } from './IssueApiSource';
+import { NoActiveProjectError } from '../../errors/NoActiveProjectError';
 import type { IssueDto } from '@bealin/shared';
 
 function createMockDto(overrides: Partial<IssueDto> = {}): IssueDto {
@@ -56,6 +57,7 @@ describe('IssueApiSource', () => {
       mockFetch.mockResolvedValue({
         ok: false,
         status: 500,
+        json: () => Promise.resolve({ error: { code: 'INTERNAL_ERROR', message: 'Server error' } }),
       });
 
       // WHEN/THEN
@@ -73,6 +75,20 @@ describe('IssueApiSource', () => {
 
       // WHEN/THEN
       await expect(apiSource.fetchAll()).rejects.toThrow('Invalid response format');
+    });
+
+    it('throws NoActiveProjectError when backend returns NO_ACTIVE_PROJECT', async () => {
+      // GIVEN
+      mockFetch.mockResolvedValue({
+        ok: false,
+        status: 400,
+        json: () => Promise.resolve({
+          error: { code: 'NO_ACTIVE_PROJECT', message: 'Please select a project first' },
+        }),
+      });
+
+      // WHEN/THEN
+      await expect(apiSource.fetchAll()).rejects.toThrow(NoActiveProjectError);
     });
   });
 
@@ -112,6 +128,7 @@ describe('IssueApiSource', () => {
       mockFetch.mockResolvedValue({
         ok: false,
         status: 500,
+        json: () => Promise.resolve({ error: { code: 'INTERNAL_ERROR', message: 'Server error' } }),
       });
 
       // WHEN/THEN
@@ -131,6 +148,20 @@ describe('IssueApiSource', () => {
       await expect(apiSource.fetchById('be-abc')).rejects.toThrow(
         'Invalid response format',
       );
+    });
+
+    it('throws NoActiveProjectError when backend returns NO_ACTIVE_PROJECT', async () => {
+      // GIVEN
+      mockFetch.mockResolvedValue({
+        ok: false,
+        status: 400,
+        json: () => Promise.resolve({
+          error: { code: 'NO_ACTIVE_PROJECT', message: 'Please select a project first' },
+        }),
+      });
+
+      // WHEN/THEN
+      await expect(apiSource.fetchById('be-abc')).rejects.toThrow(NoActiveProjectError);
     });
   });
 });
