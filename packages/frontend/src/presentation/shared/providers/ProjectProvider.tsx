@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { createContext, useContext, useState, useCallback } from 'react';
 import { useProjectsViewModel } from '@presentation/projects/viewmodels/useProjectsViewModel';
 import { AddProjectDialog } from '@presentation/projects/components/AddProjectDialog';
 import type { Project } from '@domain/entities/Project';
@@ -18,29 +18,19 @@ interface ProjectProviderProps {
 
 /**
  * Provider for project-related state.
- * Automatically shows Add Project dialog when no projects exist.
+ * Manages the Add Project dialog globally.
  */
 export function ProjectProvider({ children }: ProjectProviderProps) {
-  const { projects, activeProject, isLoading, hasNoProjects } = useProjectsViewModel();
+  const { projects, activeProject, isLoading } = useProjectsViewModel();
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
-
-  // Auto-show dialog when no projects
-  useEffect(() => {
-    if (!isLoading && hasNoProjects) {
-      setIsAddDialogOpen(true);
-    }
-  }, [isLoading, hasNoProjects]);
 
   const showAddProjectDialog = useCallback(() => {
     setIsAddDialogOpen(true);
   }, []);
 
   const handleClose = useCallback(() => {
-    // Don't allow closing if no projects exist
-    if (projects.length > 0) {
-      setIsAddDialogOpen(false);
-    }
-  }, [projects.length]);
+    setIsAddDialogOpen(false);
+  }, []);
 
   const handleProjectAdded = useCallback(() => {
     setIsAddDialogOpen(false);
@@ -62,7 +52,6 @@ export function ProjectProvider({ children }: ProjectProviderProps) {
         isOpen={isAddDialogOpen}
         onClose={handleClose}
         onProjectAdded={handleProjectAdded}
-        preventClose={hasNoProjects}
       />
     </ProjectContext.Provider>
   );
