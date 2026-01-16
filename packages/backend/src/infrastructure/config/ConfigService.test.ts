@@ -294,4 +294,46 @@ describe('ConfigService', () => {
       await expect(service.setActiveProject('nonexistent')).rejects.toThrow('Project not found');
     });
   });
+
+  describe('validatePath', () => {
+    it('validates project path (without .beads suffix)', () => {
+      // GIVEN - path is /home/user/myproject, issues at /home/user/myproject/.beads/issues.jsonl
+      vi.mocked(existsSync).mockImplementation((p) => {
+        return p === '/home/user/myproject/.beads/issues.jsonl';
+      });
+
+      // WHEN
+      const result = service.validatePath('/home/user/myproject');
+
+      // THEN
+      expect(result.valid).toBe(true);
+      expect(result.suggestedName).toBe('myproject');
+    });
+
+    it('validates .beads path (with .beads suffix)', () => {
+      // GIVEN - path is /home/user/myproject/.beads
+      vi.mocked(existsSync).mockImplementation((p) => {
+        return p === '/home/user/myproject/.beads/issues.jsonl';
+      });
+
+      // WHEN
+      const result = service.validatePath('/home/user/myproject/.beads');
+
+      // THEN
+      expect(result.valid).toBe(true);
+      expect(result.suggestedName).toBe('myproject');
+    });
+
+    it('returns invalid for path without issues.jsonl', () => {
+      // GIVEN
+      vi.mocked(existsSync).mockReturnValue(false);
+
+      // WHEN
+      const result = service.validatePath('/home/user/invalid');
+
+      // THEN
+      expect(result.valid).toBe(false);
+      expect(result.suggestedName).toBe('invalid');
+    });
+  });
 });
