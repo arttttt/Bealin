@@ -1,1 +1,2 @@
-export { useProjectsViewModel } from './viewmodels/useProjectsViewModel';
+export { useProjectsViewModel, useAddProjectViewModel } from './viewmodels';
+export { AddProjectDialog } from './components';
