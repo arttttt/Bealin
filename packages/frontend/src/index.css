@@ -215,6 +215,7 @@
     scrollbar-width: thin;
     scrollbar-color: var(--text-tertiary) transparent;
   }
+  html,
   body {
     @apply bg-background text-foreground;
   }
