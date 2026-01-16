@@ -38,6 +38,7 @@ export function KanbanBoard({ issues }: KanbanBoardProps) {
       {COLUMNS.map((column) => (
         <KanbanColumn
           key={column.key}
+          columnKey={column.key}
           title={column.title}
           issues={columns[column.key] ?? []}
         />
