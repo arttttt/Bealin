@@ -1,11 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useCallback, useRef } from 'react';
 import { useInject } from '@di/useInject';
 import { DI_TOKENS } from '@di/tokens';
 import type { Project } from '@domain/entities/Project';
 import type { ProjectRepository } from '@domain/repositories/ProjectRepository';
-
-const PROJECT_SWITCH_DEBOUNCE_MS = 300;
 
 interface ProjectsViewModelResult {
   readonly projects: Project[];
@@ -50,32 +47,39 @@ export function useProjectsViewModel(): ProjectsViewModelResult {
 
   const switchProjectMutation = useMutation({
     mutationFn: (id: string) => projectRepo.setActiveProject(id),
-    onSuccess: () => {
+    onMutate: async (id: string) => {
+      // Cancel outgoing refetches to avoid overwriting optimistic update
+      await queryClient.cancelQueries({ queryKey: ['activeProject'] });
+
+      // Snapshot previous value for rollback
+      const previousActiveProject =
+        queryClient.getQueryData<Project | null>(['activeProject']);
+
+      // Optimistically update to new active project
+      const allProjects = queryClient.getQueryData<Project[]>(['projects']);
+      const newActiveProject = allProjects?.find((p) => p.id.value === id);
+      if (newActiveProject) {
+        queryClient.setQueryData(['activeProject'], newActiveProject);
+      }
+
+      return { previousActiveProject };
+    },
+    onError: (_err, _id, context) => {
+      // Rollback on error
+      if (context?.previousActiveProject !== undefined) {
+        queryClient.setQueryData(
+          ['activeProject'],
+          context.previousActiveProject,
+        );
+      }
+    },
+    onSettled: () => {
+      // Refetch to ensure server state is in sync
       void queryClient.invalidateQueries({ queryKey: ['projects'] });
       void queryClient.invalidateQueries({ queryKey: ['activeProject'] });
       void queryClient.invalidateQueries({ queryKey: ['issues'] });
     },
   });
-
-  // Debounced project switch to prevent excessive watcher start/stop cycles
-  const switchDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const switchProjectDebounced = useCallback(
-    (id: string): Promise<void> => {
-      return new Promise((resolve, reject) => {
-        if (switchDebounceRef.current) {
-          clearTimeout(switchDebounceRef.current);
-        }
-
-        switchDebounceRef.current = setTimeout(() => {
-          switchProjectMutation
-            .mutateAsync(id)
-            .then(resolve)
-            .catch(reject);
-        }, PROJECT_SWITCH_DEBOUNCE_MS);
-      });
-    },
-    [switchProjectMutation],
-  );
 
   const removeProjectMutation = useMutation({
     mutationFn: (id: string) => projectRepo.removeProject(id),
@@ -96,7 +100,7 @@ export function useProjectsViewModel(): ProjectsViewModelResult {
       addProjectMutation.mutateAsync(
         name !== undefined ? { path, name } : { path },
       ),
-    switchProject: switchProjectDebounced,
+    switchProject: (id: string) => switchProjectMutation.mutateAsync(id),
     removeProject: (id: string) => removeProjectMutation.mutateAsync(id),
     isAddingProject: addProjectMutation.isPending,
     isSwitchingProject: switchProjectMutation.isPending,
