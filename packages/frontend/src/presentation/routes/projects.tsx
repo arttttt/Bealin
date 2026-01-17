@@ -1,9 +1,9 @@
-import { useState } from 'react';
 import { createFileRoute } from '@tanstack/react-router';
 import { Plus, FolderOpen, Check } from 'lucide-react';
 import { Button } from '@presentation/shared/components/ui/button';
 import { cn } from '@presentation/shared/lib/utils';
-import { useProjectsViewModel, AddProjectDialog } from '@presentation/projects';
+import { useProjectsViewModel } from '@presentation/projects';
+import { useProjectContext } from '@presentation/shared/providers/ProjectProvider';
 import { Spinner } from '@presentation/shared/components/Spinner';
 
 export const Route = createFileRoute('/projects')({
@@ -11,7 +11,7 @@ export const Route = createFileRoute('/projects')({
 });
 
 function ProjectsPage() {
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const { showAddProjectDialog } = useProjectContext();
   const {
     projects,
     isLoading,
@@ -42,7 +42,7 @@ function ProjectsPage() {
     <div className="p-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold text-foreground">Projects</h1>
-        <Button onClick={() => setIsDialogOpen(true)}>
+        <Button onClick={() => showAddProjectDialog()}>
           <Plus className="h-4 w-4" />
           Add Project
         </Button>
@@ -57,7 +57,7 @@ function ProjectsPage() {
               Add a project to get started with Bealin
             </p>
           </div>
-          <Button onClick={() => setIsDialogOpen(true)}>
+          <Button onClick={() => showAddProjectDialog()}>
             <Plus className="h-4 w-4" />
             Add Your First Project
           </Button>
@@ -117,11 +117,6 @@ function ProjectsPage() {
           ))}
         </div>
       )}
-
-      <AddProjectDialog
-        isOpen={isDialogOpen}
-        onClose={() => setIsDialogOpen(false)}
-      />
     </div>
   );
 }
