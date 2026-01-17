@@ -140,9 +140,10 @@ export class ProjectsHandler {
       const project = await this.addProjectUseCase.execute(projectPath, name);
 
       // If this project becomes active (first project added), start watching it
+      // Fire-and-forget: don't block the response waiting for watcher to switch
       const activeProject = await this.configService.getActiveProject();
       if (activeProject && activeProject.id === project.id) {
-        await this.watcher.watchProject(activeProject.path);
+        void this.watcher.watchProject(activeProject.path);
       }
 
       reply.status(201).send({
@@ -182,9 +183,10 @@ export class ProjectsHandler {
       await this.setActiveProjectUseCase.execute(id);
 
       // Update file watcher to watch new active project
+      // Fire-and-forget: don't block the response waiting for watcher to switch
       const activeProject = await this.configService.getActiveProject();
       if (activeProject) {
-        await this.watcher.watchProject(activeProject.path);
+        void this.watcher.watchProject(activeProject.path);
       }
 
       reply.send({ success: true });
