@@ -2,6 +2,7 @@ import 'reflect-metadata';
 import { container } from 'tsyringe';
 import { DI_TOKENS } from './tokens.js';
 import { JsonlSource } from '@data/sources/filesystem/JsonlSource.js';
+import { SqliteSource } from '@data/sources/sqlite/SqliteSource.js';
 import { FileDialogSource } from '@data/sources/dialog/FileDialogSource.js';
 import { IssueRepositoryImpl } from '@data/repositories/IssueRepositoryImpl.js';
 import { ConfigRepositoryImpl } from '@data/repositories/ConfigRepositoryImpl.js';
@@ -31,6 +32,7 @@ import { EventsHandler } from '@presentation/http/EventsHandler.js';
 
 // Data Sources
 container.register(DI_TOKENS.JsonlSource, { useClass: JsonlSource });
+container.register(DI_TOKENS.SqliteSource, { useClass: SqliteSource });
 container.register(DI_TOKENS.FileDialogSource, { useClass: FileDialogSource });
 
 // Repositories

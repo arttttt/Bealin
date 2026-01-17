@@ -1,5 +1,6 @@
+import { Link } from '@tanstack/react-router';
 import { cn } from '@presentation/shared/lib/utils';
-import type { IssueViewModel } from '../types/IssueViewModel';
+import type { IssueViewModel, DependencyViewModel } from '../types/IssueViewModel';
 import { IssueDetailBreadcrumb } from './IssueDetailBreadcrumb';
 
 interface IssueDetailProps {
@@ -26,6 +27,17 @@ export function IssueDetail({ issue }: IssueDetailProps) {
         {!issue.description && (
           <div className="flex-1">
             <p className="text-sm text-muted-foreground">Add a description...</p>
+          </div>
+        )}
+
+        {(issue.blockedBy.length > 0 || issue.blocks.length > 0) && (
+          <div className="flex flex-col gap-4">
+            {issue.blockedBy.length > 0 && (
+              <DependencySection title="Blocked by" dependencies={issue.blockedBy} />
+            )}
+            {issue.blocks.length > 0 && (
+              <DependencySection title="Blocks" dependencies={issue.blocks} />
+            )}
           </div>
         )}
       </div>
@@ -193,4 +205,51 @@ function TypeIcon({ type, className }: TypeIconProps) {
         </svg>
       );
   }
+}
+
+interface DependencySectionProps {
+  title: string;
+  dependencies: readonly DependencyViewModel[];
+}
+
+function DependencySection({ title, dependencies }: DependencySectionProps) {
+  return (
+    <div className="flex flex-col gap-2">
+      <h3 className="text-xs font-medium uppercase tracking-wide text-text-secondary">
+        {title}
+      </h3>
+      <div className="rounded-md border border-border-subtle">
+        {dependencies.map((dep) => (
+          <DependencyItem key={dep.id} dependency={dep} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+interface DependencyItemProps {
+  dependency: DependencyViewModel;
+}
+
+function DependencyItem({ dependency }: DependencyItemProps) {
+  const truncatedTitle =
+    dependency.title.length > 40
+      ? `${dependency.title.slice(0, 40)}...`
+      : dependency.title;
+
+  return (
+    <Link
+      to="/issues/$issueId"
+      params={{ issueId: dependency.id }}
+      className="flex cursor-pointer items-center gap-2 px-3 py-2 hover:bg-background-hover"
+    >
+      <StatusIcon status={dependency.status} className={dependency.statusColor} />
+      <span className="text-[13px] font-medium text-text-secondary">
+        {dependency.id.toUpperCase()}
+      </span>
+      <span className="truncate text-[13px] text-text-primary" title={dependency.title}>
+        {truncatedTitle}
+      </span>
+    </Link>
+  );
 }

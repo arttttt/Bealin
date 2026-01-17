@@ -1,4 +1,4 @@
-import type { Issue, IssueDto } from '@bealin/shared';
+import type { Issue, IssueDependency, IssueDto, IssueDependencyDto } from '@bealin/shared';
 
 /**
  * Maps Issue domain model to IssueDto for API responses.
@@ -15,6 +15,17 @@ export class IssueMapper {
       labels: issue.labels.map((label) => label.value),
       createdAt: issue.createdAt.toISOString(),
       updatedAt: issue.updatedAt.toISOString(),
+      blocks: issue.blocks.map(IssueMapper.dependencyToDto),
+      blockedBy: issue.blockedBy.map(IssueMapper.dependencyToDto),
+    };
+  }
+
+  static dependencyToDto(dep: IssueDependency): IssueDependencyDto {
+    return {
+      id: dep.id.value,
+      title: dep.title,
+      status: dep.status,
+      type: dep.type,
     };
   }
 

@@ -2,6 +2,7 @@ import 'reflect-metadata';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { IssueRepositoryImpl } from './IssueRepositoryImpl.js';
 import { JsonlSource } from '../sources/filesystem/JsonlSource.js';
+import { SqliteSource } from '../sources/sqlite/SqliteSource.js';
 import { IssueId } from '@bealin/shared';
 import type { ConfigService } from '../../infrastructure/config/ConfigService.js';
 import { NoActiveProjectError } from '../../domain/errors/NoActiveProjectError.js';
@@ -12,10 +13,19 @@ function createMockJsonlSource(): JsonlSource {
   } as unknown as JsonlSource;
 }
 
+function createMockSqliteSource(): SqliteSource {
+  return {
+    getBlockedBy: vi.fn().mockReturnValue([]),
+    getBlocks: vi.fn().mockReturnValue([]),
+    getAllDependencies: vi.fn().mockReturnValue(new Map()),
+  } as unknown as SqliteSource;
+}
+
 function createMockConfigService(activeProject: { id: string; path: string } | null): ConfigService {
   return {
     getActiveProject: vi.fn().mockResolvedValue(activeProject),
     getIssuesPath: vi.fn().mockImplementation((project) => `${project.path}/.beads/issues.jsonl`),
+    getDatabasePath: vi.fn().mockImplementation((project) => `${project.path}/.beads/beads.db`),
     getBeadsPath: vi.fn().mockImplementation((project) => `${project.path}/.beads`),
     getProjects: vi.fn(),
     addProject: vi.fn(),
@@ -43,20 +53,22 @@ const mockProject = { id: 'proj-1', path: '/test/project' };
 describe('IssueRepositoryImpl', () => {
   let repository: IssueRepositoryImpl;
   let mockJsonlSource: JsonlSource;
+  let mockSqliteSource: SqliteSource;
   let mockConfigService: ConfigService;
 
   beforeEach(() => {
     vi.clearAllMocks();
     mockJsonlSource = createMockJsonlSource();
+    mockSqliteSource = createMockSqliteSource();
     mockConfigService = createMockConfigService(mockProject);
-    repository = new IssueRepositoryImpl(mockJsonlSource, mockConfigService);
+    repository = new IssueRepositoryImpl(mockJsonlSource, mockSqliteSource, mockConfigService);
   });
 
   describe('getIssuesFilePath', () => {
     it('throws NoActiveProjectError when no project is active', async () => {
       // GIVEN
       const noProjectConfigService = createMockConfigService(null);
-      const repo = new IssueRepositoryImpl(mockJsonlSource, noProjectConfigService);
+      const repo = new IssueRepositoryImpl(mockJsonlSource, mockSqliteSource, noProjectConfigService);
 
       // WHEN/THEN
       await expect(repo.findAll()).rejects.toThrow(NoActiveProjectError);

@@ -27,6 +27,13 @@ export const issueTypeSchema = z.enum([
   'chore',
 ]);
 
+export const issueDependencySchema = z.object({
+  id: issueIdSchema,
+  title: z.string(),
+  status: issueStatusSchema,
+  type: issueTypeSchema,
+});
+
 export const issueSchema = z.object({
   id: issueIdSchema,
   title: z.string().min(1),
@@ -37,6 +44,8 @@ export const issueSchema = z.object({
   labels: z.array(labelIdSchema),
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime(),
+  blocks: z.array(issueDependencySchema).optional().default([]),
+  blockedBy: z.array(issueDependencySchema).optional().default([]),
 });
 
 export const createIssueSchema = z.object({
@@ -57,6 +66,7 @@ export const updateIssueSchema = z.object({
   labels: z.array(labelIdSchema).optional(),
 });
 
+export type IssueDependencyDto = z.infer<typeof issueDependencySchema>;
 export type IssueDto = z.infer<typeof issueSchema>;
 export type CreateIssueDto = z.infer<typeof createIssueSchema>;
 export type UpdateIssueDto = z.infer<typeof updateIssueSchema>;

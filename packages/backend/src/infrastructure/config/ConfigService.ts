@@ -52,6 +52,15 @@ export class ConfigService {
   }
 
   /**
+   * Get the beads.db path for a project.
+   * @param project - The project
+   * @returns Absolute path to beads.db
+   */
+  getDatabasePath(project: Project): string {
+    return join(project.path, '.beads', 'beads.db');
+  }
+
+  /**
    * Add a new project to the configuration.
    * @param projectPath - Absolute path to the project folder (NOT .beads folder)
    * @param name - Optional display name (extracted from path if not provided)

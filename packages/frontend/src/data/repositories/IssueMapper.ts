@@ -1,4 +1,11 @@
-import { IssueId, LabelId, type Issue, type IssueDto } from '@bealin/shared';
+import {
+  IssueId,
+  LabelId,
+  type Issue,
+  type IssueDependency,
+  type IssueDto,
+  type IssueDependencyDto,
+} from '@bealin/shared';
 
 /**
  * Maps IssueDto (API response) to Issue domain model.
@@ -20,6 +27,22 @@ export class IssueMapper {
       labels: dto.labels.map((labelId) => new LabelId(labelId)),
       createdAt: new Date(dto.createdAt),
       updatedAt: new Date(dto.updatedAt),
+      blocks: (dto.blocks ?? []).map(IssueMapper.dependencyToDomain),
+      blockedBy: (dto.blockedBy ?? []).map(IssueMapper.dependencyToDomain),
+    };
+  }
+
+  /**
+   * Convert dependency DTO to domain model.
+   * @param dto - Dependency DTO from API
+   * @returns IssueDependency domain entity
+   */
+  static dependencyToDomain(dto: IssueDependencyDto): IssueDependency {
+    return {
+      id: new IssueId(dto.id),
+      title: dto.title,
+      status: dto.status,
+      type: dto.type,
     };
   }
 

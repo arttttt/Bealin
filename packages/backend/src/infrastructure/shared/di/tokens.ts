@@ -5,6 +5,7 @@
 export const DI_TOKENS = {
   // Data Sources
   JsonlSource: 'JsonlSource',
+  SqliteSource: 'SqliteSource',
   FileDialogSource: 'FileDialogSource',
 
   // Repositories

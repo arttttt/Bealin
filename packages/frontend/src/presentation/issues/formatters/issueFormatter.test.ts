@@ -14,6 +14,8 @@ function createMockIssue(overrides: Partial<Issue> = {}): Issue {
     labels: [new LabelId('label-1')],
     createdAt: new Date('2026-01-14'),
     updatedAt: new Date('2026-01-14'),
+    blocks: [],
+    blockedBy: [],
     ...overrides,
   };
 }

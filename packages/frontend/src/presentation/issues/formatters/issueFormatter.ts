@@ -1,5 +1,5 @@
-import type { Issue, IssueStatus, IssuePriority, IssueType } from '@bealin/shared';
-import type { IssueViewModel } from '../types/IssueViewModel';
+import type { Issue, IssueDependency, IssueStatus, IssuePriority, IssueType } from '@bealin/shared';
+import type { IssueViewModel, DependencyViewModel } from '../types/IssueViewModel';
 
 const STATUS_LABELS: Record<IssueStatus, string> = {
   backlog: 'Backlog',
@@ -56,6 +56,17 @@ function formatDate(date: Date): string {
   });
 }
 
+function formatDependency(dep: IssueDependency): DependencyViewModel {
+  return {
+    id: dep.id.value,
+    title: dep.title,
+    status: STATUS_LABELS[dep.status],
+    statusColor: STATUS_COLORS[dep.status],
+    type: TYPE_LABELS[dep.type],
+    typeColor: TYPE_COLORS[dep.type],
+  };
+}
+
 export function formatIssue(issue: Issue): IssueViewModel {
   return {
     id: issue.id.value,
@@ -70,6 +81,8 @@ export function formatIssue(issue: Issue): IssueViewModel {
     createdAt: formatDate(issue.createdAt),
     updatedAt: formatDate(issue.updatedAt),
     labels: issue.labels.map((label) => label.value),
+    blocks: issue.blocks.map(formatDependency),
+    blockedBy: issue.blockedBy.map(formatDependency),
   };
 }
 

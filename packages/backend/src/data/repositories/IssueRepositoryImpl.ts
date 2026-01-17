@@ -1,9 +1,10 @@
 import { inject, injectable } from 'tsyringe';
-import type { Issue, IssueStatus, IssuePriority, IssueType } from '@bealin/shared';
+import type { Issue, IssueDependency, IssueStatus, IssuePriority, IssueType } from '@bealin/shared';
 import { IssueId } from '@bealin/shared';
 import type { IssueRepository } from '../../domain/repositories/IssueRepository.js';
 import { DI_TOKENS } from '../../infrastructure/shared/di/tokens.js';
 import { JsonlSource } from '../sources/filesystem/JsonlSource.js';
+import { SqliteSource } from '../sources/sqlite/SqliteSource.js';
 import type { ConfigService } from '../../infrastructure/config/ConfigService.js';
 import { NoActiveProjectError } from '../../domain/errors/NoActiveProjectError.js';
 
@@ -30,6 +31,7 @@ interface RawIssue {
 export class IssueRepositoryImpl implements IssueRepository {
   constructor(
     @inject(DI_TOKENS.JsonlSource) private readonly jsonlSource: JsonlSource,
+    @inject(DI_TOKENS.SqliteSource) private readonly sqliteSource: SqliteSource,
     @inject(DI_TOKENS.ConfigService) private readonly configService: ConfigService,
   ) {}
 
@@ -45,20 +47,68 @@ export class IssueRepositoryImpl implements IssueRepository {
     return this.configService.getIssuesPath(activeProject);
   }
 
+  /**
+   * Get the database path from the active project.
+   * @throws NoActiveProjectError if no project is selected
+   */
+  private async getDatabasePath(): Promise<string> {
+    const activeProject = await this.configService.getActiveProject();
+    if (!activeProject) {
+      throw new NoActiveProjectError('No active project selected');
+    }
+    return this.configService.getDatabasePath(activeProject);
+  }
+
   async findAll(): Promise<Issue[]> {
     const issuesFilePath = await this.getIssuesFilePath();
     const rawIssues = await this.jsonlSource.readAll<RawIssue>(issuesFilePath);
-    return rawIssues.map((raw) => this.mapToIssue(raw));
+
+    // Build a map for quick lookup
+    const issueMap = new Map<string, RawIssue>();
+    for (const raw of rawIssues) {
+      issueMap.set(raw.id, raw);
+    }
+
+    // Get all dependencies at once
+    const dbPath = await this.getDatabasePath();
+    const issueIds = rawIssues.map((r) => r.id);
+    const allDeps = this.sqliteSource.getAllDependencies(dbPath, issueIds);
+
+    // Map issues with dependencies
+    return rawIssues.map((raw) => {
+      const deps = allDeps.get(raw.id) ?? { blockedBy: [], blocks: [] };
+      return this.mapToIssue(raw, deps, issueMap);
+    });
   }
 
   async findById(id: IssueId): Promise<Issue | null> {
     const issuesFilePath = await this.getIssuesFilePath();
     const rawIssues = await this.jsonlSource.readAll<RawIssue>(issuesFilePath);
-    const issues = rawIssues.map((raw) => this.mapToIssue(raw));
-    return issues.find((issue) => issue.id.equals(id)) ?? null;
+
+    const raw = rawIssues.find((r) => r.id === id.value);
+    if (!raw) {
+      return null;
+    }
+
+    // Build a map for quick lookup
+    const issueMap = new Map<string, RawIssue>();
+    for (const r of rawIssues) {
+      issueMap.set(r.id, r);
+    }
+
+    // Get dependencies for this issue
+    const dbPath = await this.getDatabasePath();
+    const blockedBy = this.sqliteSource.getBlockedBy(dbPath, id.value);
+    const blocks = this.sqliteSource.getBlocks(dbPath, id.value);
+
+    return this.mapToIssue(raw, { blockedBy, blocks }, issueMap);
   }
 
-  private mapToIssue(raw: RawIssue): Issue {
+  private mapToIssue(
+    raw: RawIssue,
+    deps: { blockedBy: string[]; blocks: string[] },
+    issueMap: Map<string, RawIssue>,
+  ): Issue {
     return {
       id: new IssueId(raw.id),
       title: raw.title,
@@ -69,7 +119,29 @@ export class IssueRepositoryImpl implements IssueRepository {
       labels: [],
       createdAt: new Date(raw.created_at),
       updatedAt: new Date(raw.updated_at),
+      blocks: this.mapDependencies(deps.blocks, issueMap),
+      blockedBy: this.mapDependencies(deps.blockedBy, issueMap),
     };
+  }
+
+  private mapDependencies(
+    depIds: string[],
+    issueMap: Map<string, RawIssue>,
+  ): IssueDependency[] {
+    return depIds
+      .map((depId) => {
+        const raw = issueMap.get(depId);
+        if (!raw) {
+          return null;
+        }
+        return {
+          id: new IssueId(raw.id),
+          title: raw.title,
+          status: this.mapStatus(raw.status),
+          type: this.mapType(raw.issue_type),
+        };
+      })
+      .filter((dep): dep is IssueDependency => dep !== null);
   }
 
   private mapStatus(rawStatus: string): IssueStatus {

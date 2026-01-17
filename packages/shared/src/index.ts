@@ -4,6 +4,7 @@ export { IssueId, LabelId, ProjectId } from './types/index.js';
 // Domain models
 export type {
   Issue,
+  IssueDependency,
   IssueStatus,
   IssuePriority,
   IssueType,
@@ -18,9 +19,11 @@ export {
   issueStatusSchema,
   issuePrioritySchema,
   issueTypeSchema,
+  issueDependencySchema,
   issueSchema,
   createIssueSchema,
   updateIssueSchema,
+  type IssueDependencyDto,
   type IssueDto,
   type CreateIssueDto,
   type UpdateIssueDto,
