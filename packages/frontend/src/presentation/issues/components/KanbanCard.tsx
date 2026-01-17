@@ -1,5 +1,6 @@
 import { Link } from '@tanstack/react-router';
 import { cn } from '@presentation/shared/lib/utils';
+import { TypeIcon } from '@presentation/shared/components/icons/TypeIcon';
 import type { IssueViewModel } from '../types/IssueViewModel';
 
 interface KanbanCardProps {
@@ -16,6 +17,7 @@ export function KanbanCard({ issue }: KanbanCardProps) {
       <div className="rounded-md border border-border bg-background-elevated p-3 transition-colors hover:bg-background-hover">
         <div className="mb-1 flex items-center gap-2 text-xs text-muted-foreground">
           <span>{issue.id}</span>
+          <TypeIcon type={issue.type} size="sm" className={issue.typeColor} />
           <PriorityBadge priority={issue.priority} className={issue.priorityColor} />
         </div>
         <h3 className="line-clamp-2 text-sm font-medium text-text-primary">{issue.title}</h3>
