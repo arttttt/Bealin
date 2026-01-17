@@ -1,6 +1,6 @@
 import { watch, type FSWatcher } from 'chokidar';
 import { join } from 'node:path';
-import { existsSync } from 'node:fs';
+import { existsSync, readdirSync } from 'node:fs';
 import type { FastifyReply } from 'fastify';
 
 /**
@@ -84,10 +84,18 @@ export class BeadsWatcher {
 
     this.currentProjectPath = projectPath;
 
-    // Watch all .jsonl files in .beads directory
-    const watchPattern = join(beadsPath, '**', '*.jsonl');
+    // Get all .jsonl files in .beads directory
+    // Note: Using explicit file list instead of glob pattern due to chokidar v5
+    // compatibility issues with glob patterns on macOS
+    const jsonlFiles = readdirSync(beadsPath)
+      .filter((f) => f.endsWith('.jsonl'))
+      .map((f) => join(beadsPath, f));
 
-    this.watcher = watch(watchPattern, {
+    if (jsonlFiles.length === 0) {
+      return;
+    }
+
+    this.watcher = watch(jsonlFiles, {
       ignoreInitial: true,
       awaitWriteFinish: {
         stabilityThreshold: 100,
@@ -95,7 +103,7 @@ export class BeadsWatcher {
       },
     });
 
-    this.watcher.on('all', (_event: string, _path: string) => {
+    this.watcher.on('all', () => {
       this.notifyClientsDebounced();
     });
 
